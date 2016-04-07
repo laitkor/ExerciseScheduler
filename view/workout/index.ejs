@@ -1,0 +1,601 @@
+<%- include ../main.ejs %>
+<script type="text/javascript" src="/javascripts/recaptcha_ajax.js"></script>
+<script src="/javascripts/recaptcha.js"></script>
+<script src="/javascripts/workout.js"></script>
+
+<link rel="stylesheet" href="/stylesheets/ng-table.css">
+
+<link rel="stylesheet" href="/stylesheets/popup_f.css" />
+<script type='text/javascript' src="/javascripts/ui-bootstrap-tpl.js"></script>
+<script type='text/javascript' src="/javascripts/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap-combined.min.css">
+<style>
+body, html {
+  background-image: none, none !important;
+}
+
+      
+#wrapper {
+  height: 300px;
+  width: 548px;
+  overflow: hidden;
+  position: relative;
+}
+   
+#scrollbar {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+        
+}
+      
+.pull-right {
+  float: right !important;
+}
+
+.btn {
+    background-color: #221d1a;
+    color: #000;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 3px;
+    text-align: center;
+    text-decoration: none;
+    width: 40px;
+}
+.btn-group, .btn-group-vertical {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+.btn-group > .btn:first-child {
+    margin-left: 0;
+}
+.btn:hover {
+    background: none repeat scroll 0 0 #428bca;
+    color: #fff;
+}
+.btn-group > .btn:hover, .btn-group-vertical > .btn:hover, .btn-group > .btn:focus, .btn-group-vertical > .btn:focus, .btn-group > .btn:active, .btn-group-vertical > .btn:active, .btn-group > .btn.active, .btn-group-vertical > .btn.active {
+    z-index: 2;
+}
+.btn-default:active, .btn-default.active {
+    background-color: #428bca;
+    border-color: #428bca;
+    color:#fff;
+}
+.btn:active, .btn.active {
+    background-image: none;
+}
+.btn-default:active, .btn-primary:active, .btn-success:active, .btn-info:active, .btn-warning:active, .btn-danger:active, .btn-default.active, .btn-primary.active, .btn-success.active, .btn-info.active, .btn-warning.active, .btn-danger.active {
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.125) inset;
+}
+.btn-group > .btn, .btn-group-vertical > .btn {
+    float: left;
+    position: relative;
+}
+.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+    border-radius: 0;
+}
+.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
+    margin-left: -1px;
+}
+.btn-group > .btn, .btn-group-vertical > .btn {
+    float: left;
+    position: relative;
+}
+.btn-default {
+    background-image: linear-gradient(to bottom, #fff 0px, #e6e6e6 100%);
+    background-repeat: repeat-x;
+    border-color: #ccc;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.ng-table tr.emphasis td {
+  background-color: #DDD;
+  font-weight: bold;
+}
+
+.ui-sortable-handle{
+  cursor:move;
+}
+
+.more_details, .rest_details{
+  border: 1px solid;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 2px;
+}
+input[type=radio] {
+float:none !important;
+width:auto !important;
+} 
+
+.list_details ul li{
+  list-style:none;
+}
+
+#workout_details .weight_per{
+  float:none !important;
+  margin-right:4px;
+}
+
+#trash #alldetails{ display:block;}
+
+/** css for ng drag and drop */
+  [data-ng-drag]{
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+ [data-ng-drag]{
+/*  width: 100px;
+  height: 100px;
+  background: rgba(255,0,0, 0.5);
+  color:white;
+  text-align: center;
+  padding-top:40px;
+  display: inline-block;
+  margin:0 10px;*/
+  cursor: move;
+} 
+/* [data-ng-drag].drag-over{
+  border:solid 1px red;
+} */
+[data-ng-drag].dragging{
+  opacity: 0.5;
+}
+[data-ng-drop]{
+ 
+  height:50px;
+   /*width: 120px;
+  
+  background: rgba(0,255,0, 0.5);
+  height: 200px; 
+  padding-top:90px;
+  margin:20px auto;
+  text-align: center;*/
+  display:block; 
+  position: relative;
+}
+/* [data-ng-drop].drag-enter{
+  border:solid 5px red;
+}
+*/
+[data-ng-drop] span.title{
+  display: block;
+  position: absolute;
+  top:50%;
+  left:50%;
+  width: 200px;
+  height: 20px;
+  margin-left: -100px;
+  margin-top: -10px;
+}
+[ng-drop] div{
+  position: relative;
+  z-index: 2;
+}
+
+.ng-table th{
+  text-align:left;
+}
+</style>
+
+
+<section id="table_" style="height:calc(100% - 80px);" data-ng-controller="WorkoutCtrl" data-ng-init="setting()" >
+
+  <div id="row_">
+    <%- include ../left_menu.ejs %>
+    
+    <div id="table-cell_" class="work_area" style="height:100%;">
+
+      <div class="padding"> 
+        <!-- P A G E  -  W O R K  -  A R E A -->
+        
+        <h1 title="Heading" class="Heading_main">Workout</h1>
+        <%- include ../user_common.ejs %>
+        
+        <div class="Line_hr"></div>
+      
+        <div href="#" class="clr padding_bottom" ng-show="user.user_type =='coach' || (user.user_type == 'athlete' && user.created_by == '0')"><input type="button" style="float:right;" class="new_button" value="Add Workout" onclick="ShowPop('add_workout')" ng-click="ShowPopup();"><div style="clear:both;"></div>
+        </div>
+
+        <input type="text" ng-model="search" placeholder="Search" style="width:100%;"/><br/>
+        <!-- workout list table starts-->    
+         <table data-ng-init="allWorkouts()" class="table ng-table-responsive grid_ table" ng-cloak style="width:100%;" cellpadding="5" cellspacing="0">
+         <thead>
+          <tr>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Description</th>
+            <th>Difficulty</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Report</th>
+          </tr>
+         </thead>
+         <tbody> 
+          <tr ng-repeat="workout in filtereds | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
+            <td>
+               <a href="javascript:void(0)" id="editRowBtn{{workout.workoutid}}" ng-click="ViewPopup(workout.workoutid);" >{{workout.name}}</a>
+            </td>
+           <td>
+                {{workout.ownername}}
+            </td>
+            <td>
+                {{workout.description}}
+            </td>
+
+            <td>
+                {{workout.difficulty}}
+            </td>
+            <td>
+                {{workout.status}}
+            </td>
+
+            <td><a href="javascript:void(0)" id="editRowBtn{{workout.workoutid}}" ng-click="EditPopup(workout.workoutid);" ng-show="(user.user_type =='coach' && user.vendorid == workout.created_by) || (user.user_type == 'athlete' && user.created_by == '0' && user.vendorid == workout.created_by)">Edit&nbsp;|</a>
+            <a href="javascript:void(0)" ng-click="DeleteWorkout(workout.workoutid)" ng-show="(user.user_type =='coach' && user.vendorid == workout.created_by) || (user.user_type == 'athlete' && user.created_by == '0' && user.vendorid == workout.created_by)">Delete</a>
+            </td>
+            <td><a href="javascript:void(0);" ng-click="ReportPopup(workout.workoutid,workout.ownerid,workout.name);" ng-hide="(user.user_type =='coach' && user.vendorid == workout.created_by) || (user.user_type == 'athlete' && user.vendorid == workout.created_by && user.created_by == 0)">Report</a></td>
+
+        </tr>
+        </tbody>
+         </table>
+         <pagination data-boundary-links="true" data-num-pages="noOfPages" data-current-page="currentPage" max-size="maxSize" class="pagination-small" data-previous-text="&laquo;" data-next-text="&raquo;"></pagination>
+        <!--<table ng-table="tableParams" show-filter="true" class="table ng-table-responsive grid_ table" data-ng-init="allWorkouts()" ng-cloak style="width:100%;" cellpadding="5" cellspacing="0">
+        <tr ng-repeat="workout in $data">
+            <td data-title="'Name'" sortable="'name'" width="150">
+                {{workout.name}} 
+            </td>
+           <td data-title="'Owner'" width="120" >
+                {{workout.ownername}}
+            </td>
+            <td data-title="'Description'" width="160">
+                {{workout.description}}
+            </td>
+
+            <td data-title="'Difficulty'" sortable="'difficulty'" width="140" align="left">
+                {{workout.difficulty}}
+            </td>
+
+            
+
+             <td data-title="'Status'" filter="{ 'status': 'status' }" width="120" align="center">
+                {{workout.status}}
+            </td>
+
+            <td width="120" data-title="'Action'" align="center"><a href="javascript:void(0)" id="editRowBtn{{workout.workoutid}}" ng-click="EditPopup(workout.workoutid);" ng-show="(user.user_type =='coach' && user.vendorid == workout.created_by) || (user.user_type == 'athlete' && user.created_by == '0' && user.vendorid == workout.created_by)">Edit&nbsp;|</a>
+            <a href="javascript:void(0)" ng-click="DeleteWorkout(workout.workoutid)" ng-show="(user.user_type =='coach' && user.vendorid == workout.created_by) || (user.user_type == 'athlete' && user.created_by == '0' && user.vendorid == workout.created_by)">Delete</a>
+            </td>
+            <td width="70" data-title="'Report'"><a href="javascript:void(0);" ng-click="ReportPopup(workout.workoutid,workout.ownerid,workout.name);" ng-hide="(user.user_type =='coach' && user.vendorid == workout.created_by) || (user.user_type == 'athlete' && user.vendorid == workout.created_by && user.created_by == 0)">Report</a></td>
+
+        </tr>
+    </table>    
+    <script type="text/ng-template" id="ng-table/filters/status.html">
+        <select ng-model="params.filter()[name]" name="filter-status">
+         <option value="" selected>All</option>
+          <option value="public">Public</option>
+          <option value="private" >Private</option>
+          <option value="draft">Draft</option>
+        </select>
+    </script>-->
+  
+  <!-- workout list table ends--> 
+   <!-- file included for workout details addition section-->
+<%- include workout_details.ejs %>
+
+<%- include edit_workout_details.ejs %>
+<%- include associate_exercise.ejs %>
+<%- include view_workout_details.ejs %>
+  </div>
+        <!-- END ---P A G E  -  W O R K  -  A R E A --> 
+      </div>
+
+    </div>
+  </div>
+<!-- upload image while adding workout starts here-->
+        
+  <div id="popup_pimg" class="F_popup" style="display:none">
+      <div class="popup" style="width:650px; left: -300px;">
+            <div class="hed"> <span>Upload Profile Image</span> <a href="javascript:void(0)" onClick="HidePopImg('popup_pimg')" ng-click="HidePopImg();">x</a>
+              <div style="clear:both;"></div>
+            </div> 
+            <div class="popup-txt" style="height:150px"><div class="">
+            <div class="successMessage" id="messages" data-ng-show="messages" data-ng-bind="messages"> </div>
+            <div class="errorMessage" id="errors" data-ng-show="errors" data-ng-bind="errors"> </div>
+                <form ng-upload="uploadWorkoutImg(content)" action="/workout/upload-workout-form" multipart/form-data >     
+                    <table id="tblStage" width="100%" cellspacing="0" cellpadding="5" border="0"  class=" formTable" >
+                        <tbody>
+                            <tr>
+                            <td ><label>Upload image</label></td>
+                            <td><input type="file" name="profile_pics" value="" ng-model='new_workout.workout_image'  style="width:auto !important;" required></td>
+                           </tr>
+                           <tr>
+                            <td style="margin:0px;padding:0px;"></td>
+                            <td style="margin: 0px; padding: 0px; vertical-align: top;"><span style="font-size: 10px;">* Upload image of dimension 190x190</span></td>
+                          </tr>
+                            <tr>
+                            <td >&nbsp; </td>
+                            <td><input type="submit" value="Submit" ng-disabled="$isUploading"></td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                    </form>
+             </div>
+            <div class="clr" ></div>
+          </div> 
+     </div>
+  </div>
+<!-- upload image while adding workout ends here-->
+
+     <!-- report workout starts -->
+
+    <div id="report_workout" class="F_popup" ng-cloak style="display: none">
+       <div class="popup" style="width:650px; left: -300px;">
+         <div class="hed" style="margin-bottom:0px;"><span>Report Workout</span> <a href="javascript:void(0)" onClick="HidePop('report_workout')" ng-click="HideReportPop()">x</a>
+              <div style="clear:both;"></div>
+            </div>
+         <div class="popup-txt" id="report_workout_popup" style="padding-left:5px;padding-right:5px;height:351px;">
+          <div class="">
+            <div class="successMessage" id="department_span messages" data-ng-show="messages" data-ng-bind="messages"> </div>
+            <div class="errorMessage" id="department_span errors" data-ng-show="errors" data-ng-bind="errors" style="margin-bottom:5px;"> </div>
+
+            <form data-ng-submit="report_workout(new_report)" method="post" name="ReportWorkout" id="ReportWorkout">
+            <input type="hidden" name="ownerid" value="{{new_report.ownerid}}" id="ownerid" data-ng-model="new_report.ownerid" >
+
+            <input type="hidden" name="workoutid_to_report" value="{{new_report.reported_for_id}}" data-ng-model="new_report.reported_for_id">
+
+            <input type="hidden" name="reporter_owner_name" id="reporter_owner_name" value="{{user.name}}" data-ng-model="new_report.reporter_owner_name" >
+
+            <input type="hidden" name="report_workout_name" data-ng-model="new_report.workout_name" id="report_workout_name" value="{{new_report.workout_name}}">
+
+              <table width="100%" border="0" cellpadding="5" cellspacing="0" class="formTable" style="margin-bottom:0px !important;">
+                    <tbody>
+                      <tr> 
+                        <td style="padding:7px 9px;">
+                        <textarea rows="6" cols="25" placeholder="Tell us why" style="resize:none;" name="report_description" data-ng-model="new_report.report_description" required></textarea>
+                         </td>
+                      </tr>
+                    </tbody> 
+                  </table>
+                  <table width="100%" border="0" cellpadding="5" cellspacing="0" class="formTable" style="height:100px;">
+                    <tr>
+                      <td>
+                      </td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                        <td><div
+                vc-recaptcha
+                tabindex="3"
+                theme="clean"
+                key="model.key"
+            ></div></td>
+                        <td></td>
+                        <td align="right"><input type="submit" id="submit_done" value="Submit" ng-disabled="$isUploading"></td>
+                        <td>
+                       </td>
+
+                      </tr>
+                     
+                  </table>
+                  
+          </form>
+        </div></div>
+        </div>
+        </div>
+
+   <!-- report workout ends here-->
+  
+
+<%- include popup_common.ejs %>
+
+</section>
+
+<%- include ../sub_footer.ejs %>
+<script src="/javascripts/jquery.min.js">
+<script type="text/javascript" src="/javascripts/jquery-ui-1.7.2.custom.js"></script>
+<!--<script type="text/javascript" src="/javascripts/jquery.sortable.js"></script>-->
+<!--<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>-->
+<script src="/javascripts/jquery.ui.js"></script>
+<script src="/javascripts/ngDraggable.js"></script>
+
+
+<script type="text/javascript">
+ $(document).ready(function(){ 
+    //$('.handle').sortable();
+    $("#btn_duplicate").sortable().disableSelection();
+    var c = 0;
+    var cloned;
+
+    $("#btn_edit_duplicate").click(function () {
+      $('#EditallDetails').css('display','none');
+      $('#EditmoreDetails').css('display','block');
+    });
+
+$(document).on( "click", ".arrow_button" , function() {
+         var arrow_id = this.id;
+         //var div_id = $('#'+arrow_id).parent().parent().parent().parent().attr('id');
+         var div_id = $('#'+arrow_id).attr('rel');
+         
+         $('#exercise_details_'+div_id).fadeToggle( 500, "swing" ); 
+
+          if($('#'+arrow_id).attr('src') == '../images/up_arrow.gif'){
+            
+            $('#'+arrow_id).attr('src', '../images/down_arrow.png');
+            $('#'+div_id+' #workout_details_'+div_id).css({'display':'flex'});
+            $('#'+div_id+' #add_exr_name_'+div_id).css({'display':'none'});
+            $('#'+div_id+' .action_btn').css({'margin-top':'0px'});
+          }
+             
+          else{
+            $('#'+arrow_id).attr('src', '../images/up_arrow.gif');
+            $('#'+div_id+' #workout_details_'+div_id).css({'display':'none'});
+            $('#'+div_id+' #add_exr_name_'+div_id).css({'display':'block'});
+            $('#'+div_id+' .action_btn').css({'margin-top':'-19px'});
+          }
+             
+});
+
+$(document).on( "click", ".arrow_button_rest" , function() {
+         var arrow_id = this.id;
+         //var div_id = $('#'+arrow_id).parent().parent().attr('id');
+         var div_id = $('#'+arrow_id).attr('rel');
+         $('#rest_details_'+div_id).fadeToggle( 500, "swing" ); 
+
+          if($('.rest_details #'+arrow_id).attr('src') == '../images/up_arrow.gif')
+             $('.rest_details #'+arrow_id).attr('src', '../images/down_arrow.png');
+          else
+             $('.rest_details #'+arrow_id).attr('src', '../images/up_arrow.gif');
+});
+
+/** edit workout section for show/hide starts */
+
+$(document).on( "click", ".edit_arrow_button" , function() {
+         var edit_arrow_id = this.id;
+         
+         //var div_id = $('#'+edit_arrow_id).parent().parent().attr('id');
+         var div_id = $('#'+edit_arrow_id).attr('rel');
+         
+         $('#edit_exercise_details_'+div_id).fadeToggle( 500, "swing" ); 
+          if($('#'+edit_arrow_id).attr('src') == '../images/up_arrow.gif'){ 
+            $('#'+edit_arrow_id).attr('src', '../images/down_arrow.png');
+            $('#edit_'+div_id+' #edit_workout_details_'+div_id).css({'display':'flex'});
+            $('#edit_exr_name_'+div_id).css({'display':'none'});
+            //$('#edit_'+div_id+' .action_btn').css({'margin-top':'0px'});
+          }
+             
+          else{
+            $('#'+edit_arrow_id).attr('src', '../images/up_arrow.gif');
+            $('#edit_'+div_id+' #edit_workout_details_'+div_id).css({'display':'none'});
+            $('#edit_exr_name_'+div_id).css({'display':'block'});
+            //$('#edit_'+div_id+' .action_btn').css({'margin-top':'-19px'});
+          }
+             
+});
+
+$(document).on( "click", ".edit_arrow_button_rest" , function() {
+         var edit_arrow_id = this.id;
+         
+         
+         var div_id = $('#'+edit_arrow_id).attr('rel');
+         
+         $('#edit_rest_details_'+div_id).fadeToggle( 500, "swing" ); 
+
+          if($('.rest_details #'+edit_arrow_id).attr('src') == '../images/up_arrow.gif')
+             $('.rest_details #'+edit_arrow_id).attr('src', '../images/down_arrow.png');
+          else
+             $('.rest_details #'+edit_arrow_id).attr('src', '../images/up_arrow.gif');
+});
+
+/** edit workout section for show/hide ends */
+
+
+
+$(document).on("change",".display_cal",function(){ 
+      
+    var table_id = $(this).parent().parent().parent().parent().attr('id');
+    //alert(table_id);
+    var value = this.value;
+    //alert(this);
+    if(value == 'fixed'){
+        $('#'+table_id+' .fixed_options').css('display','table-row');
+        $('#'+table_id+' .max_options').css('display','none');
+        $('#'+table_id+' .previous_options').css('display','none');
+
+        $('#'+table_id+' .fixed_options .number_of_sets').attr('required', true);
+        $('#'+table_id+' .fixed_options .weight_percentage').attr('required', true);
+        $('#'+table_id+' .fixed_options .rest_in_between_c').attr('required', true);
+
+    }
+
+    if(value == 'max'){
+        $('#'+table_id+' .max_options').css('display','table-row');
+        $('#'+table_id+' .fixed_options').css('display','none');
+        $('#'+table_id+' .previous_options').css('display','none');
+
+        $('#'+table_id+' .max_options .number_of_sets').attr('required', true);
+        $('#'+table_id+' .max_options .weight_percentage').attr('required', true);
+        $('#'+table_id+' .max_options .rest_in_between_c').attr('required', true);
+    }
+
+    if(value == 'previous'){
+        $('#'+table_id+' .previous_options').css('display','table-row');
+        $('#'+table_id+' .fixed_options').css('display','none');
+        $('#'+table_id+' .max_options').css('display','none');
+
+        $('#'+table_id+' .previous_options .workout_calc').attr('required', true);
+        $('#'+table_id+' .previous_options .weight_percentage').attr('required', true);
+        $('#'+table_id+' .previous_options .rest_in_between_c').attr('required', true);
+    }
+
+    if(value == ''){
+        $('#'+table_id+' .max_options').css('display','none');
+        $('#'+table_id+' .previous_options').css('display','none');
+        $('#'+table_id+' .fixed_options').css('display','none');
+
+    }
+})
+
+})
+
+ 
+function ShowPop(id)
+{
+  document.getElementById(id).style.display = "";
+  document.body.style.overflowY = "hidden";
+}
+function HidePop(id)
+{ 
+  document.getElementById(id).style.display = "none";
+  document.body.style.overflowY = "auto";
+
+}
+function ShowWorkout(id){
+  document.getElementById(id).style.display = "";
+  document.body.style.overflowY = "hidden";
+}
+
+function ShowPopImg(id)
+{
+  HidePop('add_workout');
+
+  document.getElementById(id).style.display = "";
+  document.body.style.overflowY = "hidden";
+}
+
+
+function ShowEditPopImg(id)
+{
+  HidePop('edit_workout');
+
+  document.getElementById(id).style.display = "";
+  document.body.style.overflowY = "hidden";
+}
+
+function HidePopImg(id)
+{
+  document.getElementById(id).style.display = "none";
+  document.body.style.overflowY = "auto";
+  ShowPop('add_workout');
+
+}
+
+function HideEditPopImg(id)
+{
+  document.getElementById(id).style.display = "none";
+  document.body.style.overflowY = "auto";
+  ShowPop('edit_workout');
+
+}
+
+</script>

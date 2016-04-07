@@ -1,0 +1,154 @@
+ <form data-ng-submit="AssociateDetails(associate_more)" name="EditmoreDetails" id="EditmoreDetails" style="display:none;">
+      <input type="hidden" name="workout_id" id="workout_id" value="{{details_workoutid}}" data-ng-model="associate_more.workout_id" >
+
+      <input type="hidden" name="exercise_linked" id="exercise_linked" value="" data-ng-model="associate_more.exercise_linked">
+      
+      <input type="hidden" name="detailsid" id="detailsid" value="{{new_workout_builder[0].detailsid}}" data-ng-model="edit_more_detail.detailsid" >    
+      
+      <input type="hidden" name="numberofdays1" id="numberofdays1" value="{{current_selected}}" data-ng-model="associate_more.numberofdays" />
+
+      <div id="daywise_details">
+        <table style="border:none !important;">
+          <tr>
+           <td width="40%">Day: {{current_selected}}</td>
+            <td width="15%"></td>
+            <td width="40%"><input type="button" value="Add More" id="add_btn_duplicate" data-role="none" ng-click="add_more_associate()" style="float:right;margin-bottom:5px;cursor:default !important;"/></td>
+            <td width="40%"><!--<input type="button" value="Add Rest" id="add_btn_rest" data-role="none" ng-click="add_assoc_rest()" style="float:right;margin-bottom:5px;cursor:default !important;"/>--></td>
+            <td width="40%"><input type="button" name="btn_back" id="btn_back" value="Back" ng-click="Display_all_details();"/></td>
+          </tr>
+        </table>
+  </div>    
+<div class="handle more_exercise_divs">
+
+        <div class="more_details ui-sortable-handle" data-ng-repeat="add_more_details in associate_more.more_detail">
+        <div id="more_{{ $index}}">
+           <div class="hed">
+            <div data-ng-drop="true"  data-ng-drop-success="onDropCompleteMore($data,$event,$index)" style="height:20px !important;">
+            
+              <div class="item" id="more_exr_name_{{ $index }}" style="display:block;">{{droppedItemsMore[$index].name ? droppedItemsMore[$index].name: 'Drop Exercise Here'}}</div>
+              <input type="hidden" name="exercise_linked" id="exercise_linked" value="{{droppedItemsMore[$index].exerciseid}}" data-ng-model="add_more_details.exercise_linked" >
+               
+               <span id="more_workout_details_{{ $index }}" style="display:none;margin-right:0px !important;"> {{droppedItemsMore[$index].name}} :
+               <span ng-if="add_more_details.calculator == 'fixed'" class="weight_per" style="margin-right:3px !important;">{{add_more_details.weight_percentage}}Kg</span>
+               <span ng-if="add_more_details.calculator == 'max'" class="weight_per" style="margin-right:3px !important;">{{add_more_details.weight_percentage}}%</span>
+               <span ng-if="add_more_details.calculator == 'previous'" class="weight_per" style="margin-right:3px !important;">{{add_more_details.weight_percentage}}%</span>
+               -Day{{add_more_details.numberofdays}}- {{add_more_details.number_of_sets}} sets of {{add_more_details.rest_in_between_c}} reps </span>
+
+               <input type="button" value="Duplicate" id="more_btn_duplicate" data-role="none" ng-click="more_copymore(associate_more,$index)"  style="float:right;" ng-if="droppedItemsMore[$index].name !='Rest'"/>
+
+               <input type="button" ng-click="delete_more_assoc_detail(add_more_details)" class="delete_div" value="Delete" style="float:right;" />
+             
+               <div >
+              <input type="button" id="btn_move_down_{{$index}}"  ng-if="associate_more.more_detail.length > 1 && associate_more.more_detail.length-1 > $index" ng-click="MoreMoveDown($index,associate_more)" class="delete_div" value="Move Down" style="float:right;" />
+             
+              <input type="button" id="btn_move_up_{{$index}}" ng-if="$index != 0" ng-click="MoreMoveUp($index,associate_more)" class="delete_div" value="Move Up" style="float:right;" />
+             
+              </div> 
+             
+               <div style="clear:both;"></div>
+              </div>
+              <div style="clear:both;"></div>
+           
+            </div>
+               
+        </div>
+        <!-- exercise_details table starts -->  
+          <table width="100%" border="0" style="border:none !important;margin-bottom:0px !important;" id="more_exercise_details_{{ $index }}" class="exercise_details">
+          
+                  <tr id="no_rest_options_{{ $index }}" ng-if="droppedItemsMore[$index].name !='Rest'">
+                    <td width="20%"><label>Calculator</label></td>
+                    <td width="50%">
+                    <select name="calculator"  style="width:20%;" required class="display_cal" data-ng-model="add_more_details.calculator">
+                      <option value="">Select</option>
+                      <option value="fixed">Fixed</option>
+                      <option value="max">Max</option>
+                      <option value="previous">Previous</option>
+                    </select></td>
+                     
+                  </tr>
+
+                  <tr id="rest_options_{{ $index }}"  ng-if="droppedItemsMore[$index].name =='Rest'">
+                      <td><label>Rest in between</label></td>
+                      <td><input type="number" style="width:50%;" required data-ng-model="add_more_details.rest_in_between" min="1" /><span style="vertical-align:sub;">seconds</span></td>
+                  </tr>
+
+                  <tr class="fixed_options" ng-if="associate_more.more_detail[$index].calculator =='fixed' && droppedItemsMore[$index].name !='Rest' ">
+                    <td><label>Number of sets</label></td>
+                    <td><input type="number" class="number_of_sets" name="number_of_sets" data-ng-model="add_more_details.number_of_sets" style="width:20%" min="1" required /></td>
+                  </tr>
+                  <tr class="fixed_options" ng-if="associate_more.more_detail[$index].calculator =='fixed' && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Weight</label></td>
+                    <td><input type="number" class="weight_percentage" name="weight_percentage" data-ng-model="add_more_details.weight_percentage" style="width:20%" min="1" required/><span style="vertical-align:sub;">kg</span></td>
+                  </tr>
+                  <tr class="fixed_options" ng-if="associate_more.more_detail[$index].calculator =='fixed' && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Rest in between</label></td>
+                    <td><input type="number" class="rest_in_between_c" name="rest_in_between_c" data-ng-model="add_more_details.rest_in_between_c" style="width:20%;" min="1" required /><span style="vertical-align:sub;">seconds</span></td>
+                  </tr>
+
+
+                  <tr class="max_options" ng-if="associate_more.more_detail[$index].calculator =='max' && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Number of sets</label></td>
+                    <td><input type="number" class="number_of_sets" name="number_of_sets" style="width:20%;" data-ng-model="add_more_details.number_of_sets" min="1" required /></td>
+                  </tr>
+                  <tr class="max_options" ng-if="associate_more.more_detail[$index].calculator =='max' && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Percentage</label></td>
+                    <td><input type="number" class="weight_percentage" name="weight_percentage" style="width:20%;" data-ng-model="add_more_details.weight_percentage" min="1" required /></td>
+                  </tr>
+                  <tr class="max_options" ng-if="associate_more.more_detail[$index].calculator =='max' && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Rest in between</label></td>
+                    <td><input type="number" class="rest_in_between_c" name="rest_in_between_c" data-ng-model="add_more_details.rest_in_between_c" style="width:20%;" min="1" required /><span style="vertical-align:sub;">seconds</span></td>
+                  </tr>
+
+
+                  <tr ng-if="previousdetails.length==0 && associate_more.more_detail[$index].calculator =='previous' ">
+                    <td></td>
+                    <td>No records in workout history for the workout.</td>
+                  </tr>
+
+                  <tr class="previous_options" ng-if="associate_more.more_detail[$index].calculator =='previous' && previousdetails.length>0 && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Workout from</label></td>
+                    <td><select class="workout_calc" name="workout_calc" style="width:50%;" data-ng-model="add_more_details.workout_calc" required>
+
+                      <option ng-repeat="prev_details in previousdetails"  required value="{{prev_details.whid}}">{{prev_details.workout_name}}-Day {{prev_details.day_done}}</option>
+                    </select>
+                    </td>
+                  </tr>
+                  <tr class="previous_options" ng-if="associate_more.more_detail[$index].calculator =='previous' && previousdetails.length>0 && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Percentage</label></td>
+                    <td><input type="number" class="weight_percentage" name="weight_percentage" style="width:20%;" data-ng-model="add_more_details.weight_percentage" min="1" required /></td>
+                  </tr>
+                  <tr class="previous_options" ng-if="associate_more.more_detail[$index].calculator =='previous' && previousdetails.length>0 && droppedItemsMore[$index].name !='Rest'">
+                    <td><label>Rest in between</label></td>
+                    <td><input type="number" class="rest_in_between_c" name="rest_in_between_c" data-ng-model="add_more_details.rest_in_between_c" style="width:20%;" min="1" required /><span style="vertical-align:sub;">seconds</span></td>
+                  </tr>
+            
+          </table>
+           
+            <div style="clear:both;">    
+        </div><!-- end of details1 div-->
+        
+        </div>
+       <input type="submit" value="Save draft" id="add_more_save" name="add_more_save" style="float:right;"/>
+       <div style="clear:both;"></div>
+     </div>
+    </form>
+
+ <!-- display message popup for edit workout builder for add more days details starts here-->
+  
+      <div id="addmoreworkoutbuilder_show_msg_popup" class="F_popup" style="display:none;">
+          <div class="popup" style=" left: -180px;top: 200px;">
+            <div class="popup-txt" style="height:130px !important;background:#fff;">
+
+            <div class="successMessage" id="department_span messages" ng-cloak data-ng-show="messages" data-ng-bind="messages"> </div>
+
+            <div class="errorMessage" id="department_span errors" ng-cloak data-ng-show="errors" data-ng-bind="errors"> </div>
+
+            <div style="text-align:center;"> 
+            <input type="button" value="OK" ng-click="HideMsgPop('addmoreworkoutbuilder_show_msg_popup','edit_popup')" style="float:none;">
+            </div>
+            </div>
+          </div>
+        </div>
+  <!-- display message popup for edit workout builder for add more days details ends here-->
+
+ </div>

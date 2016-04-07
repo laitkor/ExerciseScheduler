@@ -1,0 +1,139 @@
+<!-- workout builder popup starts -->
+      <div id="view_popup" class="F_popup" ng-cloak style="display:none">
+        <div class="popup" style="width:990px; left: -470px;">
+            <div class="hed">
+            <div style="float:left;">
+            <span>View Workout Builder</span> 
+            </div>
+            <div style="float:right;width:150px;"> {{workout_name}}
+            <a href="javascript:void(0)" ng-click="HideViewWorkoutDetails('view_popup')">x</a>
+            </div>
+              <div style="clear:both;"></div>
+            </div>
+            <!--- content to edit workout details -->
+         <div class="popup-txt"><div class="">
+            <div class="successMessage" id="department_span messages" data-ng-show="messages" data-ng-bind="messages"> </div>
+            <div class="errorMessage" id="department_span errors" data-ng-show="errors" data-ng-bind="errors"> </div>
+              <table class="formTable" style="margin-left:10px;border:0px;width:98%;height:400px;">
+              <tr><td width="65%" style="vertical-align:top;">  
+                      <div id="daywise_details">
+                        <table style="border:none !important;" width="100%">
+                          <tr>
+                          <td ng-if="new_workout_builder.length > 0">Day: </td>
+                          <td width="15%" ng-if="new_workout_builder.length > 0">
+                            
+                              <select name="more_numberofdays" id="more_numberofdays" data-ng-model="new_workout_builder[0].numberofdays" required style="margin-left:10px" ng-change="onChangedView()">
+
+                              <option ng-repeat="i in range" value="{{i}}" >{{i}}</option>
+                              </select>
+                            </td>
+                            <td width="40%"><input ng-if="new_workout_builder.length == 0 && current_selected>1" type="button" name="btn_back" id="btn_back" value="Back" ng-click="Display_all_details();"/></td>
+                            <td width="26%"></td>
+                            <td></td>
+                            
+                          </tr>
+                        </table>
+
+                  </div>    
+
+                  <div id="all_the_details" class="handle">
+                  <!--<div class="exercise_divs">-->
+                    <!-- WD Loop Start --->
+                      <div ng-if="new_workout_builder.length ==0"><p>No Record Found </p></div>
+                      <div ng-if="new_workout_builder.length > 0" class="more_details ui-sortable-handle edit_section" data-ng-repeat="more_details in new_workout_builder[0].wd_details" id="edit_section_{{$index}}" ng-init="$parentindex = $index">
+
+                        <div id="edit_{{ $index}}">
+                           <div class="hed">
+                            <div data-ng-drop="true">
+                             
+                              <div class="item" style="display:block;">{{more_details.exercise_name}}
+                              </div>
+                              </div>
+
+                           
+                            </div>
+                               
+                        </div>
+                        <!-- exercise_details table starts -->      
+                        <table width="100%" border="0" style="border:none !important;margin-bottom:0px !important;" id="view_exercise_details_{{ $index }}" class="exercise_details">
+                        
+                        <tr id="no_rest_options_{{ $index }}" ng-if="!edit_more_detail.more_detail[$index].rest_in_between">
+                          <td width="20%"><label>Calculator</label></td>
+                          <td width="50%">{{edit_more_detail.more_detail[$index].calculator}}</td>
+                           
+                        </tr>
+
+                                <tr id="rest_options_{{ $index }}" ng-if="edit_more_detail.more_detail[$index].rest_in_between">
+                                  <td width="20%"><label>Rest in between</label></td>
+                                  <td width="50%">{{edit_more_detail.more_detail[$index].rest_in_between}}<span style="margin-left:5px">seconds</span></td>
+                                </tr>
+
+                                <tr class="fixed_options" ng-if="edit_more_detail.more_detail[$index].calculator =='fixed'">
+                                  <td><label>Number of sets</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].number_of_sets}}</td>
+                                </tr>
+                                <tr class="fixed_options" ng-if="edit_more_detail.more_detail[$index].calculator =='fixed'">
+                                  <td><label>Weight</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].weight_percentage}}<span style="margin-left:5px">kg</span></td>
+                                </tr>
+                                <tr class="fixed_options" ng-if="edit_more_detail.more_detail[$index].calculator =='fixed'">
+                                  <td><label>Rest in between</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].rest_in_between_c}}<span style="margin-left:5px">seconds</span></td>
+                                </tr>
+
+                                <tr class="max_options" ng-if="edit_more_detail.more_detail[$index].calculator =='max'">
+                                  <td><label>Number of sets</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].number_of_sets}}</td>
+                                </tr>
+                                <tr class="max_options" ng-if="edit_more_detail.more_detail[$index].calculator =='max'">
+                                  <td><label>Percentage</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].weight_percentage}}</td>
+                                </tr>
+                                <tr class="max_options" ng-if="edit_more_detail.more_detail[$index].calculator =='max'">
+                                  <td><label>Rest in between</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].rest_in_between_c}}<span style="margin-left:5px">seconds</span></td>
+                                </tr>
+
+                                <tr ng-if="previousdetails.length==0 && edit_more_detail.more_detail[$index].calculator =='previous' ">
+                                  <td></td>
+                                  <td>No records in workout history for the workout.</td>
+                                </tr>
+
+                                <tr class="previous_options" ng-if="edit_more_detail.more_detail[$index].calculator =='previous'">
+                                  <td><label>Workout from</label></td>
+                                  <td>{{edit_more_detail.more_detail[$parentindex].workout_calc}}
+                                  </td>
+                                </tr>
+                                <tr class="previous_options" ng-if="edit_more_detail.more_detail[$index].calculator =='previous'">
+                                  <td><label>Percentage</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].weight_percentage}}</td>
+                                </tr>
+                                <tr class="previous_options" ng-if="edit_more_detail.more_detail[$index].calculator =='previous'">
+                                  <td><label>Rest in between</label></td>
+                                  <td>{{edit_more_detail.more_detail[$index].rest_in_between_c}}<span style="margin-left:5px">seconds</span></td>
+                                </tr>
+                                
+                        </table>
+                         
+                        
+                        </div><!-- end of details1 div-->
+                        
+                        
+                        
+                    <!-- WD Loop End -->
+                    
+                        </div>
+                      
+                  </div>
+                 
+                
+                </td></tr>
+                </table>
+            </div>
+            </div>
+            </div> 
+
+        <!-- END ---P A G E  -  W O R K  -  A R E A --> 
+      </div>   
+
+    <!-- workout builder popup ends -->
